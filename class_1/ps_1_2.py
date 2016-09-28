@@ -4,8 +4,7 @@ monthlyInterestRate = float(annualInterestRate) / 12.0
 monthlyPaymentRate = float(input("monthlyPaymentRate = "))
 minimumPayment = 0
 remainingBalance = balance
-i = 1
-while i <= 12:
+for i in range(1,13):
     minimumMonthlyPayment = remainingBalance * monthlyPaymentRate
     remainingBalance = remainingBalance - minimumMonthlyPayment
     remainingBalance = remainingBalance + monthlyInterestRate * remainingBalance
@@ -13,6 +12,5 @@ while i <= 12:
     print("Minimum monthly payment: " + str(round(minimumMonthlyPayment, 2)))
     print("Remaining balance: " + str(round(remainingBalance, 2)))
     minimumPayment += minimumMonthlyPayment
-    i += 1
 print("Total paid: " + str(round(minimumPayment, 2)))
 print("Remaining balance: " + str(round(remainingBalance, 2)))
