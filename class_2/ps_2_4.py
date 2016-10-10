@@ -16,6 +16,8 @@ def input_letter(available_letters, left_guesses):
     print("You have {} guesses left".format(left_guesses))
     print("Available letters: {}".format(available_letters))
     letter = input("Please guess a letter: ")
+    while(letter not in available_letters):
+        letter = input("Invalid letter, please try again: ")
     return letter.lower()
 
 def get_word_with_letter(letter, original_word, user_word):
