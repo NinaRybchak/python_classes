@@ -35,20 +35,23 @@ def count_guesses(letter, user_word, left_guesses):
         print("Oops! That letter is not in my word: {}\n".format(user_word))
         left_guesses = left_guesses - 1
     return left_guesses
+def main():
+    original_word = choose_random_word(read_words()).lower()
+    user_word = "_" * len(original_word)
+    available_letters = "abcdefghijklmnopqrstuvwxyz"
+    left_guesses = 7
+    print("Welcome to the game, Hangman! \nI am thinking of a word that is "
+    + str(len(original_word)) + " letters long.\n")
+    while((left_guesses > 0) and ('_' in user_word)):
+         letter = input_letter(available_letters, left_guesses)
+         user_word = get_word_with_letter(letter, original_word, user_word)
+         left_guesses = count_guesses(letter, user_word, left_guesses)
+         available_letters = available_letters.replace(letter, '')
+    if(left_guesses > 0):
+        print("You won and guessed the word: {}".format(user_word))
+    else:
+        print("Sorry, but you lost. \nThe word I am thinking of is '{}'".format(
+        original_word))
 
-original_word = choose_random_word(read_words()).lower()
-user_word = "_" * len(original_word)
-available_letters = "abcdefghijklmnopqrstuvwxyz"
-left_guesses = 7
-print("Welcome to the game, Hangman! \nI am thinking of a word that is "
-+ str(len(original_word)) + " letters long.\n")
-while((left_guesses > 0) and ('_' in user_word)):
-     letter = input_letter(available_letters, left_guesses)
-     user_word = get_word_with_letter(letter, original_word, user_word)
-     left_guesses = count_guesses(letter, user_word, left_guesses)
-     available_letters = available_letters.replace(letter, '')
-if(left_guesses > 0):
-    print("You won and guessed the word: {}".format(user_word))
-else:
-    print("Sorry, but you lost. \nThe word I am thinking of is '{}'".format(
-    original_word))
+if __name__ == "__main__":
+    main()
