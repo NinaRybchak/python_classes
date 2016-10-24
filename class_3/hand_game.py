@@ -50,15 +50,16 @@ def updateHand(hand, word):
         new_hand[letter] = new_hand[letter] - 1
     return new_hand
 
-def isValidWord(hand, word):
+def isValidWord(hand, word, wordsList):
     validFlag = False
-    words = read_words()
-    if word in list(words):
+    curr_hand = hand.copy()
+    if word in list(wordsList):
         validFlag = True
         for letter in word:
-            if hand.get(letter, 0) == 0:
-                validFlag = False
-                break
+            if curr_hand.get(letter, 0) == 0:
+                return False
+            else:
+                curr_hand[letter] = curr_hand[letter] - 1
     return validFlag
 
 def calculateHandlen(hand):
@@ -67,7 +68,7 @@ def calculateHandlen(hand):
         len = len + hand[letter]
     return len
 
-def playHand(user_hand, hand_size):
+def playHand(user_hand, hand_size, wordsList):
     hand = user_hand.copy()
     handLen = calculateHandlen(hand)
     score = 0
@@ -77,7 +78,7 @@ def playHand(user_hand, hand_size):
         if word == ".":
             print("Goodbye! Total score: {} points.".format(score))
             break
-        if isValidWord(hand, word):
+        if isValidWord(hand, word, wordsList):
             hand = updateHand(hand, word)
             handLen = calculateHandlen(hand)
             current_score = get_word_score(word, hand_size)
@@ -90,25 +91,63 @@ def playHand(user_hand, hand_size):
         else:
             print("Invalid word, please try again.")
 
+def compChooseWord(hand, wordsList, n):
+    for i in reversed(range(2, n+1)):
+        for word in wordsList:
+            if len(word) == i and isValidWord(hand, word, wordsList):
+                return word
+    return ''
+
+def compPlayHand(user_hand, wordsList, n):
+    hand = user_hand.copy()
+    handLen = calculateHandlen(hand)
+    score = 0
+    while handLen > 0:
+        displayHand(hand)
+        word = compChooseWord(hand, wordsList, handLen)
+        if word != '':
+            hand = updateHand(hand, word)
+            handLen = calculateHandlen(hand)
+            current_score = get_word_score(word, n)
+            score = score + current_score
+            print("'{0}' earned {1} points. Total: {2} points".format(word,
+            current_score, score))
+            if handLen == 0:
+                print("Run out of letters. Total score: {} points.".format(score))
+                break
+        else:
+            print("No more words found. Total score: {} points.".format(score))
+            break
+
 def playGame(hand_size):
     inp_string = "\n\nEnter n to deal a new hand, r to replay the last hand, or e to end game: "
-    user_choice = input(inp_string)
+    wordsList = read_words()
     hand = {}
+    user_choice = "n"
     while user_choice != "e":
-        if user_choice == "r":
-            if hand != {}:
-                playHand(hand, hand_size)
+        user_choice = input(inp_string)
+        if user_choice == "r" or user_choice == "n":
+            if user_choice == "n":
+                hand = dealHand(hand_size)
             else:
-                print("You have not played a hand yet. Please play a new hand first!")
-        elif user_choice == "n":
-            hand = dealHand(hand_size)
-            playHand(hand, hand_size)
+                if hand == {}:
+                    print("You have not played a hand yet. Please play a new hand first!")
+                    continue
+            inp_player = input("\nEnter u to have yourself play, c to have the computer play:")
+            if inp_player == 'u':
+                playHand(hand, hand_size, wordsList)
+            elif inp_player == 'c':
+                compPlayHand(hand, wordsList, hand_size)
+            else:
+                print("Invalid command.")
+        elif user_choice == "e":
+            continue
         else:
             print("Invalid command.")
-        user_choice = input(inp_string)
 
 def main():
-    hand_size = 7
+    hand_size = 12
+    # print(isValidWord({'e': 1, 'i': 1, 'm': 1, 't' : 0}, "time", read_words()))
     playGame(hand_size)
 
 if __name__ == "__main__":
