@@ -50,16 +50,20 @@ def updateHand(hand, word):
         new_hand[letter] = new_hand[letter] - 1
     return new_hand
 
+def isWordInHand(hand, word):
+    curr_hand = hand.copy()
+    for letter in word:
+        if curr_hand.get(letter, 0) == 0:
+            return False
+        else:
+            curr_hand[letter] = curr_hand[letter] - 1
+    return True
+
 def isValidWord(hand, word, wordsList):
     validFlag = False
     curr_hand = hand.copy()
-    if word in list(wordsList):
+    if word in list(wordsList) and isWordInHand(hand, word):
         validFlag = True
-        for letter in word:
-            if curr_hand.get(letter, 0) == 0:
-                return False
-            else:
-                curr_hand[letter] = curr_hand[letter] - 1
     return validFlag
 
 def calculateHandlen(hand):
@@ -94,7 +98,7 @@ def playHand(user_hand, hand_size, wordsList):
 def compChooseWord(hand, wordsList, n):
     for i in reversed(range(2, n+1)):
         for word in wordsList:
-            if len(word) == i and isValidWord(hand, word, wordsList):
+            if len(word) == i and isWordInHand(hand, word):
                 return word
     return ''
 
@@ -147,7 +151,6 @@ def playGame(hand_size):
 
 def main():
     hand_size = 12
-    # print(isValidWord({'e': 1, 'i': 1, 'm': 1, 't' : 0}, "time", read_words()))
     playGame(hand_size)
 
 if __name__ == "__main__":
